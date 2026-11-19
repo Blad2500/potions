@@ -2,6 +2,7 @@ const express = require("express");
 const { eq } = require("drizzle-orm");
 const { potions } = require("../db/schema");
 const { db } = require("../db/db");    
+const renderError = require("../utilities/renderError");
 const router = express.Router();
 
 router.get("/" ,async (req, res) => {
@@ -56,5 +57,20 @@ router.delete("/:id", async (req, res) => {
         return res.status(500).json({ error: "Failed to delete potion" });
     }
 })
+
+
+router.put("/:id", async(req,res )=>{
+    try{
+        const{name, effect, isDangerous} = req.body;
+        const [updating] = awaitcdb.select().from(eq(potions.id, req.params.id))
+        if(!updating){
+            return res.status(404).json({
+                message: "nincs ilyen szar"
+            })
+        }
+    }catch(error){
+        return renderError(res, err);
+    }
+} )
 
 module.exports = router;
