@@ -1,7 +1,8 @@
 const express = require("express");
 const { eq } = require("drizzle-orm");
 const { potions } = require("../db/schema");
-const { db } = require("../db/drizzle");    
+const { db } = require("../db/db");    
+const router = express.Router();
 
 router.get("/" ,async (req, res) => {
   try {
@@ -14,7 +15,7 @@ router.get("/" ,async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try{
-        const potion = await db.select().from(potions).where(eq(potions.id,id))
+        const [potion] = await db.select().from(potions).where(eq(potions.id, +req.params.id))
         if(!potion){
             return res.status(404).json({ error: "Potion not found" });
         }
@@ -55,3 +56,5 @@ router.delete("/:id", async (req, res) => {
         return res.status(500).json({ error: "Failed to delete potion" });
     }
 })
+
+module.exports = router;
